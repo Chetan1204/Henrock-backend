@@ -1,30 +1,49 @@
 const nodemailer = require("nodemailer");
 
-const sendEmail = async ({ to, subject, text }) => {
+const sendEmail = async ({ name, email, companyName, subject, phone, message }) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com", 
-      port: 465, 
-      secure: true,             
+
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
-        user: 'chetankharat0628@gmail.com', // your Gmail
-        pass: 'ggvdwskcxexirvol', // 16-digit app password
+        user: 'jobshsa3@gmail.com', 
+        pass: 'avasypgwafzshnma', 
       },
     });
+    const formattedPhone = phone
+      ? phone.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3")
+      : phone;
 
     const mailOptions = {
-    from: "chetankharat@immersiveinfotech.com",
-      to: `chetankharat@immersiveinfotech.com`,
-      subject: "New Career Application Received",
-      text: `You have received a new career application.`,
+      from: "jobshsa3@gmail.com",
+      to: "jobshsa3@gmail.com",
+      subject: "New Contact Form Submission",
+      html: `
+        <p><strong>New Contact Form Submission</strong></p>
+        <p><strong>Name:</strong> ${name}</p>
+<p><strong>Email:</strong> ${email}</p>
+<p><strong>Company Name:</strong> ${companyName}</p>
+<p><strong>Subject:</strong> ${subject}</p>
+<p><strong>Phone:</strong> ${formattedPhone}</p>
+<p><strong>Message:</strong> ${message}</p>
+
+      `,
     };
 
-    const ttt=  await transporter.sendMail(mailOptions);
-    console.log("Email sent: " , ttt);
-    console.log("Email sent successfully");
+    await transporter.sendMail(mailOptions);
+
+    return {
+      success: true,
+      message: "Email sent successfully!"
+    };
   } catch (error) {
-    console.error("Error sending email:", error.message);
-    throw new Error("Email could not be sent");
+    console.error("Error sending email:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to send email"
+    };
   }
 };
 

@@ -1,23 +1,40 @@
 const Career = require('../model/carrer');
-const sendEmail = require('../utils/sendEmail'); // 👈 Make sure this file exists
+const sendEmail = require('../utils/careerEmail');
 
 exports.createCareer = async (req, res) => {
   try {
-    const cvPath = req.file ? req.file.filename : null;
-    const data = { ...req.body, cv: cvPath };
+    // 1️⃣ Get uploaded CV filename
+    const cvFile = req.file ? req.file.filename : null;
+
+    // 2️⃣ Save to DB
+    const data = { ...req.body, cv: cvFile };
     const saved = await Career.create(data);
 
-    // Send email after saving
-    await sendEmail({
-      to: "chetankharat0628@gmail.com", // 🔁 Replace with HR/admin email
-      subject: "New Career Application Received",
-      text: `
- CV: ${cvPath ? `http://localhost:5000/uploads/${cvPath}` : 'Not uploaded'}
-      `
+    // 3️⃣ Generate full URL for CV
+    const fullCvPath = cvFile
+      ? `${req.protocol}://${req.get('http://localhost:5000')}/uploads/${cvFile}`
+      : null;
+
+    // 4️⃣ Send email
+    const emailResult = await sendEmail({
+      fullName: saved.fullName,
+      email: saved.email,
+      phone: saved.phone,
+      education: saved.education,
+      experience: saved.experience,
+      jobRole: saved.jobRole,
+      message: saved.message,
+      cvPath: fullCvPath // ✅ Correct key passed here
     });
 
-    res.status(201).json({ success: true, data: saved, message: 'Application submitted & email sent' });
+    // 5️⃣ Response
+    res.status(201).json({
+      success: true,
+      data: saved,
+      emailStatus: emailResult
+    });
   } catch (err) {
+    console.error(err);
     res.status(400).json({ success: false, message: err.message });
   }
 };
