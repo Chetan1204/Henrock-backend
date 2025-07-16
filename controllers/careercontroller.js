@@ -12,7 +12,7 @@ exports.createCareer = async (req, res) => {
 
     // 3️⃣ Generate full URL for CV
     const fullCvPath = cvFile
-      ? `${req.protocol}://${req.get('http://localhost:5000')}/uploads/${cvFile}`
+      ? `${process.env.FILEPATH}${cvFile}`
       : null;
 
     // 4️⃣ Send email
