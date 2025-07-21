@@ -14,6 +14,7 @@ exports.createCareer = async (req, res) => {
     const fullCvPath = cvFile
       ? `${process.env.FILEPATH}${cvFile}`
       : null;
+       console.log("Full CV Path:", fullCvPath);
 
       console.log("Full CV Path:", fullCvPath);
 
