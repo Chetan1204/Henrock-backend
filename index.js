@@ -77,7 +77,7 @@ app.use(express.json());
 // ✅ Allow frontend to receive cookies
 app.use(
   cors({
-    origin: "http://localhost:3000", // match React app
+    origin: "https://henrockstructureassociates.com/", // match React app
     credentials: true,
   })
 );
